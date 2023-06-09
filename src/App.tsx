@@ -1,44 +1,64 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import globe from "./globe.svg";
 
+const Container = styled.div`
+  display: flex;
+  max-width: 1000px;
+  justify-content: center;
+  flex-direction: column;
+  margin: auto;
+`;
+
 const TrackerBox = styled(motion.div)`
-  margin-left: 5em;
-  margin-right: 5em;
+  margin-left: 5vw;
+  margin-right: 5vw;
   border-radius: 1.5em;
   border: 3px solid #a2f2bd;
   background-color: #f2ece4;
-  padding: 2em;
+  padding: 4vw;
   display: flex;
   position: relative;
   justify-content: center;
   height: 100%;
   flex-direction: column;
+  font-size: 2vw;
 `;
 
 const TrackerBarHeader = styled(motion.div)`
   display: flex;
-  margin-top: 2em;
-  margin-left: 5em;
-  margin-right: 5em;
-  margin-bottom: 2em;
+  margin-top: 3vw;
+  margin-left: 5vw;
+  margin-right: 5vw;
+  margin-bottom: 3vw;
 
   flex-direction: column;
   justify-content: center;
   text-align: center;
+
+  font-size: 2vw;
+
+  @media screen and (min-width: 636px) {
+    font-size: 16px;
+  }
 `;
 
 const TrackerBarTitle = styled(motion.div)`
-  font-size: 32px;
+  font-size: 6vw;
   margin-bottom: 0.5em;
   text-align: center;
+
+  @media screen and (min-width: 636px) {
+    font-size: 32px;
+  }
 `;
 
 const TrackerBarContainer = styled(motion.div)`
   display: flex;
   position: relative;
-  height: 5em;
+  height: 6vw;
+  max-height: 40px;
   width: 100%;
 `;
 
@@ -48,16 +68,20 @@ interface TrackerBaseProps {
 
 const TrackerBaseComplete = styled(motion.div)<TrackerBaseProps>`
   z-index: 0;
-  width: ${(p) => `${p.progressPercentage}%`};
+  width: ${(p: TrackerBaseProps) => `${p.progressPercentage}%`};
   background-color: #fcc5e3;
   height: 100%;
   border-radius: 2.5em;
   position: absolute;
-  display: flex;
+  display: grid;
   align-items: center;
 `;
 
-const ProgressMarkerBase = styled(motion.div)<TrackerBaseProps>`
+interface ProgressMarkerBaseProps extends TrackerBaseProps {
+  progressMarkerAlignment: string;
+}
+
+const ProgressMarkerBase = styled(motion.div)<ProgressMarkerBaseProps>`
   z-index: 2;
   width: ${(p) => `${p.progressPercentage}%`};
   height: 100%;
@@ -65,16 +89,24 @@ const ProgressMarkerBase = styled(motion.div)<TrackerBaseProps>`
   position: absolute;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: ${(p: ProgressMarkerBaseProps) =>
+    `${p.progressMarkerAlignment}`};
   pointer-events: none;
 `;
 
 const ProgressMarker = styled(motion.img)`
-  height: 4em;
+  display: block;
+  height: 4.5vw;
+  max-height: 32px;
   z-index: 3;
-  margin-left: 7px;
-  margin-right: 10px;
+  margin-left: 0.75vw;
+  margin-right: 1vw;
   pointer-events: none;
+
+  @media screen and (min-width: 636px) {
+    margin-left: 6px;
+    margin-right: 8px;
+  }
 `;
 
 const TrackerBaseEmpty = styled(motion.div)<TrackerBaseProps>`
@@ -122,17 +154,63 @@ const Stage = styled(motion.div)<StageProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
+  font-size: 2vw;
   text-align: center;
   font-style: italic;
   &:hover {
     color: #ff76c1;
   }
+
+  @media screen and (min-width: 636px) {
+    font-size: 16px;
+  }
+`;
+
+const StageText = styled(motion.div)<StageProps>`
+  z-index: 3;
+  position: relative;
+  height: 100%;
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2vw;
+  text-align: center;
+  font-style: italic;
+  &:hover {
+    color: #ff76c1;
+  }
+
+  @media screen and (min-width: 636px) {
+    font-size: 16px;
+  }
 `;
 
 const StepDetails = styled(motion.div)`
-  margin-top: 1.5em;
+  margin-top: 2vw;
   height: 200px;
+
+  @media screen and (min-width: 636px) {
+    margin-top: 16px;
+    font-size: 18px;
+  }
+`;
+
+const Underline = styled(motion.div)`
+  position: absolute;
+  z-index: 5;
+  bottom: -2px;
+  border-radius: 10px;
+  left: 0;
+  margin-left: -1vw;
+  right: 2.5vw;
+  height: 4px;
+  background: #ff76c1;
+
+  @media screen and (min-width: 636px) {
+    margin-left: -8px;
+    right: 16px;
+  }
 `;
 
 interface StageConfig {
@@ -169,9 +247,16 @@ const progressPercentage =
   (stages.filter((stage) => stage.isComplete).length / stages.length) * 100;
 
 const App: React.FC = () => {
+  const [progressMarkerAlignment, setProgressMarkerAlignment] =
+    useState("flex-start");
   const [selectedStepIndex, setSelectedStepIndex] = useState(0);
+  useEffect(() => {
+    setTimeout(() => {
+      setProgressMarkerAlignment("flex-end");
+    }, 500);
+  });
   return (
-    <>
+    <Container>
       <TrackerBarHeader>
         <TrackerBarTitle>Impact Tracker</TrackerBarTitle>
         <div>
@@ -192,18 +277,19 @@ const App: React.FC = () => {
             ></TrackerBaseComplete>
             <ProgressMarkerBase
               progressPercentage={progressPercentage}
+              progressMarkerAlignment={progressMarkerAlignment}
               layout
-              initial={{ justifyContent: "flex-start" }}
-              animate={{ justifyContent: "flex-end" }}
-              transition={{
-                type: "spring",
-                delay: 1,
-                duration: 1,
-                stiffness: 700,
-                damping: 30,
-              }}
             >
-              <ProgressMarker src={globe} />
+              <ProgressMarker
+                src={globe}
+                layout
+                transition={{
+                  duration: 3,
+                  type: "spring",
+                  damping: 20,
+                  stiffness: 50,
+                }}
+              />
             </ProgressMarkerBase>
             <TrackerBaseEmpty progressPercentage={baseBackgroundPercentage} />
             <Stages>
@@ -215,16 +301,42 @@ const App: React.FC = () => {
                   onClick={() => {
                     setSelectedStepIndex(index);
                   }}
-                >
-                  {stage.name}
-                </Stage>
+                ></Stage>
               ))}
             </Stages>
+            <div
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              <Stages style={{ backgroundColor: "transparent" }}>
+                {stages.map((stage, index) => (
+                  <>
+                    <StageText
+                      index={index}
+                      isComplete={stage.isComplete}
+                      key={stage.name}
+                      onClick={() => {
+                        setSelectedStepIndex(index);
+                      }}
+                    >
+                      {stage.name}
+
+                      {index === selectedStepIndex ? (
+                        <Underline layoutId="underline" />
+                      ) : null}
+                    </StageText>
+                  </>
+                ))}
+              </Stages>
+            </div>
           </TrackerBar>
         </TrackerBarContainer>
         <StepDetails>{stages[selectedStepIndex].name}</StepDetails>
       </TrackerBox>
-    </>
+    </Container>
   );
 };
 
