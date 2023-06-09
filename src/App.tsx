@@ -37,7 +37,7 @@ const TrackerBarHeader = styled(motion.div)`
   justify-content: center;
   text-align: center;
 
-  font-size: 2vw;
+  font-size: 2.5vw;
 
   @media screen and (min-width: 636px) {
     font-size: 16px;
@@ -188,11 +188,21 @@ const StageText = styled(motion.div)<StageProps>`
 
 const StepDetails = styled(motion.div)`
   margin-top: 2vw;
-  height: 200px;
+  h1 {
+    font-size: 4vw;
+  }
+  p {
+    font-size: 2.5vw;
+  }
 
   @media screen and (min-width: 636px) {
     margin-top: 16px;
-    font-size: 18px;
+    h1 {
+      font-size: 18px;
+    }
+    p {
+      font-size: 14px;
+    }
   }
 `;
 
@@ -215,29 +225,122 @@ const Underline = styled(motion.div)`
 
 interface StageConfig {
   name: string;
+  shortName: string;
   isComplete: boolean;
+  description: JSX.Element | string;
 }
 
 const stages: StageConfig[] = [
   {
-    name: "Fabrics",
+    name: "Textile and Fabric Manufactured",
+    shortName: "Textiles",
     isComplete: true,
+    description: (
+      <>
+        <p>
+          Our supplier’s farms are globally certified through third-party
+          verifiers and signify land and human stewardship. Independent
+          verifiers ensure that safe, responsible, and organic practices have to
+          be proven at the farm level and team members involved in garment
+          production have a safe and equitable workplace. These farms are
+          located in San Joaquin Valley, CA.
+        </p>
+        <p>
+          Global Organic Textile Standard, or GOTS®, certification means the
+          production facilities must adhere to working and social condition
+          requirements equivalent to leading social sustainability standards
+          from the International Labor Organization (ILO), United Nations
+          Guiding Principles on Business and Human Rights (UNGPs) and
+          Organization for Economic Cooperation and Development (OECD).
+        </p>
+      </>
+    ),
   },
   {
-    name: "Garments",
+    name: "Garment and Blank Manufactured",
+    shortName: "Garments",
     isComplete: true,
+    description: (
+      <>
+        <p>
+          Our garment production facilities are Worldwide Responsible Accredited
+          Production, or WRAP, certified and remain industry examples of social
+          responsibility to their employees. Guided by 12 ordinance principles,
+          WRAP certification confirms that the facility is law-abiding, using
+          fair and just labor practices, anti-discriminatory, and committed to
+          the health, safety, and security of the workplace.
+        </p>
+        <p>
+          The production facilities also work in tandem with Fairtrade Labeling
+          Organizations (FLO) to alleviate poverty afflicting the world&apos;s
+          farmers and workers by setting and certifying the compliance of
+          stringent, socially-conscious production standards. FLO believes the
+          best work environments yield the best production, and we are proud to
+          source from facilities boasting this certification. The sweats and
+          fleeces we use are stitched in Lahore, Pakistan while the t-shirts are
+          stitched in Tirupur, India.
+        </p>
+      </>
+    ),
   },
   {
-    name: "Designs",
+    name: "Design Printed",
+    shortName: "Designs",
     isComplete: true,
+    description: (
+      <>
+        <p>
+          Our designs are produced on the garments using two of the most
+          eco-friendly processes in the industry – Direct-to-Garment Printing
+          (DTG) and Embroidery. With water-based chemistry behind the inks and
+          less machine usage needed for production, DTG promotes waste reduction
+          and works best with natural fibers like those used to make our
+          garments.
+        </p>
+        <p>All printing and embroidery are completed in Manhattan, NYC.</p>
+      </>
+    ),
   },
   {
-    name: "Customer",
+    name: "Delivered to Customer",
+    shortName: "Customer",
     isComplete: true,
+    description: (
+      <>
+        <p>
+          Where you come in. We believe that single-use plastic should be a
+          relic of an unsustainable past so our products are shipped to you in
+          plant-based mailers! These mailers are made from corn that will break
+          down in 3 months at a commercial compost facility and 6 months in a
+          home compost bin.
+        </p>
+        <p>
+          Once you receive your Trenton Street merch, you become a change agent.
+          Someone who is willing to invest in a brand committed to solving the
+          issues of tomorrow, today.
+        </p>
+      </>
+    ),
   },
   {
-    name: "Impact",
+    name: "Customer Becomes Change Agent",
+    shortName: "Impact",
     isComplete: false,
+    description: (
+      <>
+        <p>
+          Your purchase does not only promote sustainability, it directly
+          supports TSCO’s impact initiatives and infrastructure development.
+        </p>
+        <p>
+          With your support from this purchase, Trenton Street was able to cover
+          the cost of Jordan’s, our partner student’s, tuition at Our Lady of
+          Mercy Primary School in Nairobi, Kenya. This was the first of many
+          semesters that Trenton Street Co. plans to sponsor for students
+          internationally! Today is One Day!
+        </p>
+      </>
+    ),
   },
 ];
 
@@ -297,7 +400,7 @@ const App: React.FC = () => {
                 <Stage
                   index={index}
                   isComplete={stage.isComplete}
-                  key={stage.name}
+                  key={stage.shortName}
                   onClick={() => {
                     setSelectedStepIndex(index);
                   }}
@@ -322,8 +425,7 @@ const App: React.FC = () => {
                         setSelectedStepIndex(index);
                       }}
                     >
-                      {stage.name}
-
+                      {stage.shortName}
                       {index === selectedStepIndex ? (
                         <Underline layoutId="underline" />
                       ) : null}
@@ -334,7 +436,12 @@ const App: React.FC = () => {
             </div>
           </TrackerBar>
         </TrackerBarContainer>
-        <StepDetails>{stages[selectedStepIndex].name}</StepDetails>
+        <StepDetails>
+          <>
+            <h1>{stages[selectedStepIndex].name}</h1>
+            {stages[selectedStepIndex].description}
+          </>
+        </StepDetails>
       </TrackerBox>
     </Container>
   );
