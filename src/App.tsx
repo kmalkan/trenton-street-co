@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import globe from "./globe.svg";
+import { Analytics } from "@vercel/analytics/react";
 
 const Container = styled.div`
   display: flex;
@@ -359,91 +360,94 @@ const App: React.FC = () => {
     }, 500);
   });
   return (
-    <Container>
-      <TrackerBarHeader>
-        <TrackerBarTitle>Impact Tracker</TrackerBarTitle>
-        <div>
-          We believe that there is no sustainability without transparency and
-          this Impact Tracker is our company’s first step towards transparent
-          business practices. Here, you can see the entire supply chain of the
-          product you just purchased. When it comes to sustainable products, the
-          impact occurs post-purchase so our supply chain does not end at the
-          customer. Check in here to see periodic updates on the impact that
-          your purchase had! Today is One Day!
-        </div>
-      </TrackerBarHeader>
-      <TrackerBox>
-        <TrackerBarContainer>
-          <TrackerBar>
-            <TrackerBaseComplete
-              progressPercentage={baseBackgroundPercentage}
-            ></TrackerBaseComplete>
-            <ProgressMarkerBase
-              progressPercentage={progressPercentage}
-              progressMarkerAlignment={progressMarkerAlignment}
-              layout
-            >
-              <ProgressMarker
-                src={globe}
+    <>
+      <Container>
+        <TrackerBarHeader>
+          <TrackerBarTitle>Impact Tracker</TrackerBarTitle>
+          <div>
+            We believe that there is no sustainability without transparency and
+            this Impact Tracker is our company’s first step towards transparent
+            business practices. Here, you can see the entire supply chain of the
+            product you just purchased. When it comes to sustainable products,
+            the impact occurs post-purchase so our supply chain does not end at
+            the customer. Check in here to see periodic updates on the impact
+            that your purchase had! Today is One Day!
+          </div>
+        </TrackerBarHeader>
+        <TrackerBox>
+          <TrackerBarContainer>
+            <TrackerBar>
+              <TrackerBaseComplete
+                progressPercentage={baseBackgroundPercentage}
+              ></TrackerBaseComplete>
+              <ProgressMarkerBase
+                progressPercentage={progressPercentage}
+                progressMarkerAlignment={progressMarkerAlignment}
                 layout
-                transition={{
-                  duration: 3,
-                  type: "spring",
-                  damping: 20,
-                  stiffness: 50,
-                }}
-              />
-            </ProgressMarkerBase>
-            <TrackerBaseEmpty progressPercentage={baseBackgroundPercentage} />
-            <Stages>
-              {stages.map((stage, index) => (
-                <Stage
-                  index={index}
-                  isComplete={stage.isComplete}
-                  key={stage.shortName}
-                  onClick={() => {
-                    setSelectedStepIndex(index);
+              >
+                <ProgressMarker
+                  src={globe}
+                  layout
+                  transition={{
+                    duration: 3,
+                    type: "spring",
+                    damping: 20,
+                    stiffness: 50,
                   }}
-                ></Stage>
-              ))}
-            </Stages>
-            <div
-              style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-              }}
-            >
-              <Stages style={{ backgroundColor: "transparent" }}>
+                />
+              </ProgressMarkerBase>
+              <TrackerBaseEmpty progressPercentage={baseBackgroundPercentage} />
+              <Stages>
                 {stages.map((stage, index) => (
-                  <>
-                    <StageText
-                      index={index}
-                      isComplete={stage.isComplete}
-                      key={stage.name}
-                      onClick={() => {
-                        setSelectedStepIndex(index);
-                      }}
-                    >
-                      {stage.shortName}
-                      {index === selectedStepIndex ? (
-                        <Underline layoutId="underline" />
-                      ) : null}
-                    </StageText>
-                  </>
+                  <Stage
+                    index={index}
+                    isComplete={stage.isComplete}
+                    key={stage.shortName}
+                    onClick={() => {
+                      setSelectedStepIndex(index);
+                    }}
+                  ></Stage>
                 ))}
               </Stages>
-            </div>
-          </TrackerBar>
-        </TrackerBarContainer>
-        <StepDetails>
-          <>
-            <h1>{stages[selectedStepIndex].name}</h1>
-            {stages[selectedStepIndex].description}
-          </>
-        </StepDetails>
-      </TrackerBox>
-    </Container>
+              <div
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <Stages style={{ backgroundColor: "transparent" }}>
+                  {stages.map((stage, index) => (
+                    <>
+                      <StageText
+                        index={index}
+                        isComplete={stage.isComplete}
+                        key={stage.name}
+                        onClick={() => {
+                          setSelectedStepIndex(index);
+                        }}
+                      >
+                        {stage.shortName}
+                        {index === selectedStepIndex ? (
+                          <Underline layoutId="underline" />
+                        ) : null}
+                      </StageText>
+                    </>
+                  ))}
+                </Stages>
+              </div>
+            </TrackerBar>
+          </TrackerBarContainer>
+          <StepDetails>
+            <>
+              <h1>{stages[selectedStepIndex].name}</h1>
+              {stages[selectedStepIndex].description}
+            </>
+          </StepDetails>
+        </TrackerBox>
+      </Container>
+      <Analytics />
+    </>
   );
 };
 
